@@ -12,8 +12,8 @@ using NGOBackend.Data;
 namespace NGOBackend.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240811100604_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240812144446_initalCreate")]
+    partial class initalCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -60,32 +60,57 @@ namespace NGOBackend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProjectId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserId");
 
-                    b.HasIndex("ProjectId");
-
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("NGOBackend.Models.User", b =>
+            modelBuilder.Entity("NGOBackend.Models.UserProject", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "ProjectId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("UserProjects");
+                });
+
+            modelBuilder.Entity("NGOBackend.Models.UserProject", b =>
                 {
                     b.HasOne("NGOBackend.Models.Project", "Project")
-                        .WithMany("Team")
-                        .HasForeignKey("ProjectId");
+                        .WithMany("UserProjects")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NGOBackend.Models.User", "User")
+                        .WithMany("UserProjects")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Project");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("NGOBackend.Models.Project", b =>
                 {
-                    b.Navigation("Team");
+                    b.Navigation("UserProjects");
+                });
+
+            modelBuilder.Entity("NGOBackend.Models.User", b =>
+                {
+                    b.Navigation("UserProjects");
                 });
 #pragma warning restore 612, 618
         }
