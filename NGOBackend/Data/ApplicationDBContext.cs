@@ -31,19 +31,7 @@ namespace NGOBackend.Data
                 .WithMany(p => p.UserProjects)
                 .HasForeignKey(up => up.ProjectId);
 
-            /*
-            builder.Entity<UserProject>()
-            .HasKey(up => new { up.UserId, up.ProjectId });
-
-            builder.Entity<UserProject>()
-                .HasOne(up => up.User)
-                .WithMany(u => u.UserProjects)
-                .HasForeignKey(up => up.UserId);
-
-            builder.Entity<UserProject>()
-                .HasOne(up => up.Project)
-                .WithMany(p => p.UserProjects)
-                .HasForeignKey(up => up.ProjectId);*/
+          
         }
     }
 }

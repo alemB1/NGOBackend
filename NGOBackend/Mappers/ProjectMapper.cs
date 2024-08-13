@@ -17,5 +17,16 @@ namespace NGOBackend.Mappers
                 Users = null
             };
         }
+
+        public static Project ToProjectFromCreate(this CreateProjectRequestDto projectModel)
+        {
+            return new Project
+            { 
+               ProjectId = projectModel.ProjectId,
+               Name = projectModel.Name,
+               StartDate = projectModel.StartDate,
+               EndDate = projectModel.EndDate
+            };
+        }
     }
 }
