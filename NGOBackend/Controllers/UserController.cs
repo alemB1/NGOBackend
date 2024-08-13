@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using NGOBackend.Data;
 using NGOBackend.Dtos.User;
+using NGOBackend.Interfaces;
 using NGOBackend.Mappers;
 using NGOBackend.Models;
 
@@ -12,22 +13,36 @@ namespace NGOBackend.Controllers
     public class UserController : ControllerBase
     {
         private readonly ApplicationDBContext _context;
-        public UserController(ApplicationDBContext dBContext)
+        private readonly IUserRepository _userRepo;
+        public UserController(ApplicationDBContext dBContext, IUserRepository userRepo)
         {
             _context = dBContext;
+            _userRepo = userRepo;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var users = await _context.Users.ToListAsync();
-            var usersDto = users.Select(s => s.ToUserDto());
+            //var usersDto = users.Select(s => s.ToUserDto());
             return Ok(users);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
+            /*
+             ovo stvara gresku zbog necega ali radi mi funkcija ako ista
+
+            var userWithProjects = await _userRepo.GetUserWithProjectsAsync(id);
+
+            if (userWithProjects != null) {
+                foreach (var userProject in userWithProjects.UserProjects) {
+                    Console.WriteLine(userProject.Project.Name);
+                }
+            }
+           */
+
             var user = await _context.Users.FindAsync(id); // async call instead of firstordefault
 
             if (user == null) return NotFound();

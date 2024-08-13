@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using NGOBackend.Data;
+using NGOBackend.Interfaces;
+using NGOBackend.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,7 @@ builder.Services.AddDbContext<ApplicationDBContext>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 
