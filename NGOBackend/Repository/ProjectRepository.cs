@@ -32,7 +32,10 @@ namespace NGOBackend.Repository
 
         public async Task<List<Project>> GetAllAsync()
         {
-            return await _context.Projects.ToListAsync();
+            return await _context.Projects
+                .Include(u => u.UserProjects)
+                .ThenInclude(up => up.User)
+                .ToListAsync();
         }
 
         public async Task<Project?> GetByIdAsync(int id)

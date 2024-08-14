@@ -24,24 +24,18 @@ namespace NGOBackend.Controllers
         public async Task<IActionResult> GetAll()
         {
             var user = await _userRepo.GetAllAsync();
-            var userDto = user.Select(u => u.ToUserDto());
-            return Ok(user);
+            var userDto = user.Select(u => u.ToUserDto()).ToList();
+            return Ok(userDto); // return the dto until you fix the model
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            /*
-             ovo stvara gresku zbog necega ali radi mi funkcija ako ista
-
-            var userWithProjects = await _userRepo.GetUserWithProjectsAsync(id);
-
-            if (userWithProjects != null) {
-                foreach (var userProject in userWithProjects.UserProjects) {
-                    Console.WriteLine(userProject.Project.Name);
-                }
+            // test
+            var projekti = await _userRepo.GetUserWithProjectsAsync(id);
+            foreach (Project pr in projekti) {
+                Console.WriteLine(pr.Name);
             }
-           */
 
             var user = await _userRepo.GetByIdAsync(id);
             if (user == null) return NotFound();
@@ -54,7 +48,6 @@ namespace NGOBackend.Controllers
             var userModel = userDto.ToUserFromCreate();
             await _userRepo.CreateAsync(userModel);
             return CreatedAtAction(nameof(GetById), new { id = userModel.UserId }, userModel.ToUserDto());
-            // automatski mapira sve
         }
 
         [HttpPut]

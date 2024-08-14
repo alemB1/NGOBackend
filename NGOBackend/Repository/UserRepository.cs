@@ -10,7 +10,6 @@ namespace NGOBackend.Repository
     public class UserRepository : IUserRepository
     {
         private ApplicationDBContext _context;
-        private readonly IUserRepository _userRepo;
 
         public UserRepository(ApplicationDBContext context)
         {
@@ -39,7 +38,10 @@ namespace NGOBackend.Repository
 
         public async Task<List<User>> GetAllAsync()
         {
-            return await _context.Users.ToListAsync();
+            return await _context.Users
+                .Include(u => u.UserProjects)
+                .ThenInclude(up => up.Project)
+                .ToListAsync();
         }
 
         public async Task<User?> GetByIdAsync(int id)
@@ -47,13 +49,6 @@ namespace NGOBackend.Repository
             return await _context.Users.FindAsync(id);
         }
 
-        public async Task<User>? GetUserWithProjectsAsync(int userId)
-        {
-            return await _context.Users
-               .Include(u => u.UserProjects)
-               .ThenInclude(up => up.Project)
-               .FirstOrDefaultAsync(u => u.UserId == userId);
-        }
 
         public async Task<User?> UpdateAsync(int id, UpdateUserRequestDto userDto)
         {
@@ -65,7 +60,8 @@ namespace NGOBackend.Repository
 
             await _context.SaveChangesAsync();
             return existingUser;
-
         }
+
+       
     }
 }

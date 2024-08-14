@@ -24,8 +24,8 @@ namespace NGOBackend.Controllers
         public async Task<IActionResult> GetAll()
         {
             var project = await _projectRepo.GetAllAsync();
-            var projectDto = project.Select(p => p.ToProjectDto()); // dto mapping goes here not in the interface\
-            return Ok(project);
+            var projectDto = project.Select(p => p.ToProjectDto()).ToList(); // dto mapping goes here not in the interface\
+            return Ok(projectDto);
         }
 
         [HttpGet("{id}")]

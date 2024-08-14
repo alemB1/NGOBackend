@@ -13,9 +13,15 @@ namespace NGOBackend.Mappers
                 UserId = userModel.UserId,
                 Username = userModel.Username,
                 Email = userModel.Email,
-                Projects = null
+                Projects = userModel.UserProjects.Select(up => new ProjectDto {
+                    ProjectId = up.Project.ProjectId,
+                    Name = up.Project.Name,
+                    StartDate = up.Project.StartDate,
+                    EndDate = up.Project.EndDate
+                }).ToList()
             };
         }
+
 
         public static User ToUserFromCreate(this CreateUserRequestDto userModel)
         {
