@@ -23,9 +23,9 @@ namespace NGOBackend.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var users = await _context.Users.ToListAsync();
-            //var usersDto = users.Select(s => s.ToUserDto());
-            return Ok(users);
+            var user = await _userRepo.GetAllAsync();
+            var userDto = user.Select(u => u.ToUserDto());
+            return Ok(user);
         }
 
         [HttpGet("{id}")]
@@ -43,20 +43,17 @@ namespace NGOBackend.Controllers
             }
            */
 
-            var user = await _context.Users.FindAsync(id); // async call instead of firstordefault
-
+            var user = await _userRepo.GetByIdAsync(id);
             if (user == null) return NotFound();
-
-            return Ok(user);
+            return Ok(user.ToUserDto());
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateUserRequestDto userDto)
         {
             var userModel = userDto.ToUserFromCreate();
-            await _context.Users.AddAsync(userModel);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetById), new {id = userModel.UserId }, userModel.ToUserDto());
+            await _userRepo.CreateAsync(userModel);
+            return CreatedAtAction(nameof(GetById), new { id = userModel.UserId }, userModel.ToUserDto());
             // automatski mapira sve
         }
 
@@ -64,26 +61,16 @@ namespace NGOBackend.Controllers
         [Route("{id}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateUserRequestDto userDto)
         {
-            var userModel = await _context.Users.FirstOrDefaultAsync(x => x.UserId == id); // fetch the user by id
-
-            if(userModel == null) return NotFound();
-
-            userModel.Email = userDto.Email;
-            userModel.Username = userDto.Username;
-
-            await _context.SaveChangesAsync();
+            var userModel = await _userRepo.UpdateAsync(id, userDto);
+            if (userModel == null) return NotFound();
             return Ok(userModel.ToUserDto());
         }
 
         [HttpDelete]
         [Route("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id) {
-            var userModel = await _context.Users.FirstOrDefaultAsync(x => x.UserId == id);
-            if(userModel == null) return NotFound();
-            
-            // async doesnt go on delete
-            _context.Users.Remove(userModel);
-            _context.SaveChanges();
+            var userModel = await _userRepo.DeleteAsync(id);
+            if (userModel == null) return NotFound();
             return NoContent();
         }
     }

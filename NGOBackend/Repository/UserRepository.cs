@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using NGOBackend.Data;
 using NGOBackend.Dtos.User;
 using NGOBackend.Interfaces;
-using NGOBackend.Mappers;
 using NGOBackend.Models;
 
 namespace NGOBackend.Repository
@@ -10,6 +10,7 @@ namespace NGOBackend.Repository
     public class UserRepository : IUserRepository
     {
         private ApplicationDBContext _context;
+        private readonly IUserRepository _userRepo;
 
         public UserRepository(ApplicationDBContext context)
         {
@@ -18,12 +19,22 @@ namespace NGOBackend.Repository
 
         public async Task<User> CreateAsync(User userModel)
         {
-            throw new NotImplementedException();
+            await _context.Users.AddAsync(userModel);
+            await _context.SaveChangesAsync();
+            return userModel;
         }
 
-        public Task<User> DeleteAsync(int id)
+        public async Task<User> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == id);
+            if (user == null)
+            {
+                return null;
+            }
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+            return user;
         }
 
         public async Task<List<User>> GetAllAsync()
@@ -44,9 +55,17 @@ namespace NGOBackend.Repository
                .FirstOrDefaultAsync(u => u.UserId == userId);
         }
 
-        public Task<User?> UpdateAsync(int id, UpdateUserRequestDto userDto)
+        public async Task<User?> UpdateAsync(int id, UpdateUserRequestDto userDto)
         {
-            throw new NotImplementedException();
+            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.UserId == id);
+            if (existingUser == null) return null;
+
+            existingUser.Email = userDto.Email;
+            existingUser.Username = userDto.Username;
+
+            await _context.SaveChangesAsync();
+            return existingUser;
+
         }
     }
 }
