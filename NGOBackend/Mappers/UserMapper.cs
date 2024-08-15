@@ -13,7 +13,7 @@ namespace NGOBackend.Mappers
                 UserId = userModel.UserId,
                 Username = userModel.Username,
                 Email = userModel.Email,
-                Projects = userModel.UserProjects.Select(up => new ProjectDto {
+                Projects = userModel.UserProjects.Select(up => new ProjectUsersDto {
                     ProjectId = up.Project.ProjectId,
                     Name = up.Project.Name,
                     StartDate = up.Project.StartDate,

@@ -7,6 +7,6 @@ namespace NGOBackend.Dtos.User
         public int UserId { get; set; }
         public string Username { get; set; }
         public string Email { get; set; }
-        public List<ProjectDto> Projects { get; set; } = null;
+        public List<ProjectUsersDto> Projects { get; set; } = null;
     }
 }

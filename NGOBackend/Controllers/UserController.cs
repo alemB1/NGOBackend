@@ -32,10 +32,7 @@ namespace NGOBackend.Controllers
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             // test
-            var projekti = await _userRepo.GetUserWithProjectsAsync(id);
-            foreach (Project pr in projekti) {
-                Console.WriteLine(pr.Name);
-            }
+           
 
             var user = await _userRepo.GetByIdAsync(id);
             if (user == null) return NotFound();

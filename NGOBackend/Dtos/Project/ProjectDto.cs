@@ -1,4 +1,5 @@
 ﻿using NGOBackend.Dtos.User;
+using System.Text.Json.Serialization;
 namespace NGOBackend.Dtos.Project
 {
     public class ProjectDto
@@ -8,7 +9,6 @@ namespace NGOBackend.Dtos.Project
         public string Name { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public List<UserDto> Users { get; set; } = null;
-
+        public List<UserProjectsDto> Users { get; set; }
     }
 }
