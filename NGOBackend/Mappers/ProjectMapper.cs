@@ -14,12 +14,11 @@ namespace NGOBackend.Mappers
                 Name = projectModel.Name,
                 StartDate = projectModel.StartDate,
                 EndDate = projectModel.EndDate,
-                Users = projectModel.UserProjects.Select(up => new UserProjectsDto
+                Users = projectModel.UserProjects?.Select(up => new UserProjectsDto
                 {
                     Username = up.User.Username,
                     Email = up.User.Email
-                }).ToList()
-                
+                }).ToList() ?? new List<UserProjectsDto>()
             };
         }
 

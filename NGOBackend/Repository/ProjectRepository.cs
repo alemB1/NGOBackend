@@ -40,7 +40,11 @@ namespace NGOBackend.Repository
 
         public async Task<Project?> GetByIdAsync(int id)
         {
-            return await _context.Projects.FindAsync(id);
+            return await _context.Projects
+                .Include(u => u.UserProjects)
+                .ThenInclude(up => up.User)
+                .Where(p => p.ProjectId == id)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<Project> UpdateAsync(int id, UpdateProjectRequestDto projectDto)

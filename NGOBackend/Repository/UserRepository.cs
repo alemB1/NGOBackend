@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using NGOBackend.Data;
 using NGOBackend.Dtos.User;
 using NGOBackend.Interfaces;
+using NGOBackend.Mappers;
 using NGOBackend.Models;
 
 namespace NGOBackend.Repository
@@ -25,6 +26,7 @@ namespace NGOBackend.Repository
 
         public async Task<User> DeleteAsync(int id)
         {
+
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == id);
             if (user == null)
             {
@@ -46,7 +48,12 @@ namespace NGOBackend.Repository
 
         public async Task<User?> GetByIdAsync(int id)
         {
-            return await _context.Users.FindAsync(id);
+            var user = await _context.Users
+                .Include(u => u.UserProjects)
+                .ThenInclude(up => up.Project)
+                .Where(x => x.UserId == id)
+                .FirstOrDefaultAsync();
+            return user;
         }
 
 

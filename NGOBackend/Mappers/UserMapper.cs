@@ -13,12 +13,13 @@ namespace NGOBackend.Mappers
                 UserId = userModel.UserId,
                 Username = userModel.Username,
                 Email = userModel.Email,
-                Projects = userModel.UserProjects.Select(up => new ProjectUsersDto {
+                Projects = userModel.UserProjects?.Select(up => new ProjectUsersDto {
                     ProjectId = up.Project.ProjectId,
                     Name = up.Project.Name,
                     StartDate = up.Project.StartDate,
                     EndDate = up.Project.EndDate
-                }).ToList()
+                }).ToList() ?? new List<ProjectUsersDto> { }
+                // null handling for new objects
             };
         }
 
@@ -27,9 +28,9 @@ namespace NGOBackend.Mappers
         {
             return new User
             {
-                UserId = userModel.UserId,
                 Email = userModel.Email,
-                Username = userModel.Username
+                Username = userModel.Username,
+                Projects = new List<Project>()
             };
         }
     }

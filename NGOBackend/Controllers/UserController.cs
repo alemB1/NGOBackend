@@ -31,11 +31,9 @@ namespace NGOBackend.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            // test
-           
-
             var user = await _userRepo.GetByIdAsync(id);
             if (user == null) return NotFound();
+            Console.Write(user);
             return Ok(user.ToUserDto());
         }
 
@@ -43,8 +41,10 @@ namespace NGOBackend.Controllers
         public async Task<IActionResult> Create([FromBody] CreateUserRequestDto userDto)
         {
             var userModel = userDto.ToUserFromCreate();
+
             await _userRepo.CreateAsync(userModel);
             return CreatedAtAction(nameof(GetById), new { id = userModel.UserId }, userModel.ToUserDto());
+            // toUserDto creates an error, the object still gets created but the dto cant process the empty project list [FIXED]
         }
 
         [HttpPut]
