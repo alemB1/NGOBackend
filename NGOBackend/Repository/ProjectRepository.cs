@@ -54,9 +54,11 @@ namespace NGOBackend.Repository
                 projects = projects.Where(p => p.EndDate <= query.EndDate);
             }
 
+            var skipNumber = (query.PageNumber - 1) * query.PageSize;
+
             // implement date sorting 
 
-            return await projects.ToListAsync();
+            return await projects.Skip(skipNumber).Take(query.PageSize).ToListAsync();
         }
 
         public async Task<Project?> GetByIdAsync(int id)
