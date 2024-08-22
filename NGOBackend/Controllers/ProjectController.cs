@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using NGOBackend.Data;
 using NGOBackend.Dtos.Project;
+using NGOBackend.Helpers;
 using NGOBackend.Interfaces;
 using NGOBackend.Mappers;
 using System.Runtime.InteropServices;
@@ -21,9 +22,11 @@ namespace NGOBackend.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] QueryObjectProject query)
         {
-            var project = await _projectRepo.GetAllAsync();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            var project = await _projectRepo.GetAllAsync(query);
             var projectDto = project.Select(p => p.ToProjectDto()).ToList(); // dto mapping goes here not in the interface\
             return Ok(projectDto);
         }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NGOBackend.Data;
 using NGOBackend.Dtos.Project;
+using NGOBackend.Helpers;
 using NGOBackend.Interfaces;
 using NGOBackend.Models;
 
@@ -30,12 +31,32 @@ namespace NGOBackend.Repository
             return project;
         }
 
-        public async Task<List<Project>> GetAllAsync()
+        public async Task<List<Project>> GetAllAsync(QueryObjectProject query)
         {
-            return await _context.Projects
-                .Include(u => u.UserProjects)
-                .ThenInclude(up => up.User)
-                .ToListAsync();
+            //cant use the asqueryable with the async call to the db
+            var projects = _context.Projects
+            .Include(u => u.UserProjects)
+            .ThenInclude(up => up.User)
+            .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(query.Name))
+            {
+                projects = projects.Where(p => p.Name.Contains(query.Name));
+            }
+
+            if (query.StartDate.HasValue)
+            {
+                projects = projects.Where(p => p.StartDate >= query.StartDate);
+            }
+
+            if (query.EndDate.HasValue)
+            {
+                projects = projects.Where(p => p.EndDate <= query.EndDate);
+            }
+
+            // implement date sorting 
+
+            return await projects.ToListAsync();
         }
 
         public async Task<Project?> GetByIdAsync(int id)
